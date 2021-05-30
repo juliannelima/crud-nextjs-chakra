@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Flex,
   Box,
@@ -16,9 +18,21 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react';
 
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+
+import { getUsers } from '../services/hooks/useUsers';
+
+
+type User = {
+  id: string,
+  name: string;
+  email: string;
+  createdAt: string;
+}
 
 export default function Home() {
+  const [users, setUsers] = useState<User[]>([]);
+
   const isLgVerison = useBreakpointValue({
     base: false,
     lg: true,
@@ -28,6 +42,12 @@ export default function Home() {
     base: false,
     md: true,
   });
+
+  const asButton = useBreakpointValue({ base: IconButton, md: Button })
+
+  useEffect(() => {
+    getUsers(1).then(response => setUsers(response.users))
+  } , [])
 
   return (
     <Flex
@@ -71,74 +91,48 @@ export default function Home() {
           <Table size="sm">
             <Thead bg="gray.200">
               <Tr>
-                <Th>Usuário</Th>
-                {isLgVerison && <Th>Nome</Th>}
+                <Th>Nome</Th>
                 {isMdVerison && <Th>E-mail</Th>}
+                {isLgVerison && <Th>Data de Cadastro</Th>}
                 <Th width="8"></Th>
                 <Th width="8"></Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr >
-                <Td>juliannelicon</Td>
-                {isLgVerison && <Td>Julianne Pereira Lima Licón</Td>}
-                {isMdVerison && <Td>juliannelicon@gmail.com</Td>}
-                <Td>
-                  <Button
-                    as={useBreakpointValue({ base: IconButton, md: Button })}
-                    variant="outline"
-                    size="sm"
-                    fontSize="sm"
-                    leftIcon={<Icon as={FaEdit} fontSize="16"/>}
-                    icon={<Icon as={FaEdit} fontSize="16"/>}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-                <Td>
-                  <Button
-                    as={useBreakpointValue({ base: IconButton, md: Button })}
-                    variant="outline"
-                    size="sm"
-                    fontSize="sm"
-                    leftIcon={<Icon as={FaTrash} fontSize="16" />}
-                    icon={<Icon as={FaTrash}
-                    fontSize="16"/>}
-                  >
-                    Apagar
-                  </Button>
-                </Td>
-              </Tr>
-              <Tr >
-                <Td>juliannelicon</Td>
-                {isLgVerison && <Td>Julianne Pereira Lima Licón</Td>}
-                {isMdVerison && <Td>juliannelicon@gmail.com</Td>}
-                <Td>
-                  <Button
-                    as={useBreakpointValue({ base: IconButton, md: Button })}
-                    variant="outline"
-                    size="sm"
-                    fontSize="sm"
-                    leftIcon={<Icon as={FaEdit} fontSize="16"/>}
-                    icon={<Icon as={FaEdit} fontSize="16"/>}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-                <Td>
-                  <Button
-                    as={useBreakpointValue({ base: IconButton, md: Button })}
-                    variant="outline"
-                    size="sm"
-                    fontSize="sm"
-                    leftIcon={<Icon as={FaTrash} fontSize="16" />}
-                    icon={<Icon as={FaTrash}
-                    fontSize="16"/>}
-                  >
-                    Apagar
-                  </Button>
-                </Td>
-              </Tr>
+              {users.map(user => {
+                return (
+                  <Tr key={user.id}>
+                    <Td>{user.name}</Td>
+                    {isMdVerison && <Td>{user.email}</Td>}
+                    {isLgVerison && <Td>{user.createdAt}</Td>}
+                    <Td>
+                      <Button
+                        as={asButton}
+                        variant="outline"
+                        size="sm"
+                        fontSize="sm"
+                        leftIcon={<Icon as={FaEdit} fontSize="16"/>}
+                        icon={<Icon as={FaEdit} fontSize="16"/>}
+                      >
+                        Editar
+                      </Button>
+                    </Td>
+                    <Td>
+                      <Button
+                        as={asButton}
+                        variant="outline"
+                        size="sm"
+                        fontSize="sm"
+                        leftIcon={<Icon as={FaTrash} fontSize="16" />}
+                        icon={<Icon as={FaTrash}
+                        fontSize="16"/>}
+                      >
+                        Apagar
+                      </Button>
+                    </Td>
+                  </Tr>
+                )
+              })}
             </Tbody>
           </Table>
 
