@@ -15,7 +15,8 @@ import {
   Input,
   useBreakpointValue,
   IconButton,
-  Icon
+  Icon,
+  Text
 } from "@chakra-ui/react";
 
 import { FaPlus } from 'react-icons/fa';
@@ -30,6 +31,11 @@ export function FormModal() {
   const [email, setEmail] = useState('');
 
   const asButton = useBreakpointValue({ base: IconButton, md: Button })
+
+  const isMdVerison = useBreakpointValue({
+    base: false,
+    md: true,
+  });
 
   function handleSubmite() {
 
@@ -49,7 +55,7 @@ export function FormModal() {
         icon={<Icon as={FaPlus} fontSize="16" />}
         title="Cadastrar Usuário"
       >
-        Cadastrar Usuário
+        {isMdVerison && <Text>Cadastrar Usuário</Text>}
       </Button>
 
       <Modal

@@ -14,6 +14,7 @@ import {
   IconButton,
   Icon,
   Stack,
+  Text,
   useBreakpointValue
 } from '@chakra-ui/react';
 
@@ -108,7 +109,7 @@ export default function Home() {
                         icon={<Icon as={FaEdit} fontSize="16"/>}
                         title="Editar Usuário"
                       >
-                        Editar
+                        {isMdVerison && <Text>Editar</Text>}
                       </Button>
                     </Td>
                     <Td>
@@ -121,7 +122,7 @@ export default function Home() {
                         icon={<Icon as={FaTrash} fontSize="16"/>}
                         title="Apagar Usuário"
                       >
-                        Apagar
+                        {isMdVerison && <Text>Apagar</Text>}
                       </Button>
                     </Td>
                   </Tr>
