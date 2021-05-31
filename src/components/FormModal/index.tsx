@@ -1,7 +1,6 @@
-import { useRef, useState } from "react"
+import { useRef, useState } from "react";
 
 import {
-  useDisclosure,
   Button,
   Modal,
   ModalOverlay,
@@ -21,82 +20,77 @@ import {
 
 import { FaPlus } from 'react-icons/fa';
 
-export function FormModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+import { useUsers } from "../../context/UseUsersContext";
 
-  const initialRef = useRef()
-  const finalRef = useRef()
+interface FormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-  const [nome, setNome] = useState('');
+export function FormModal({ isOpen, onClose }: FormModalProps) {
+  const { createUser } = useUsers();
+
+  let isLoading = false;
+
+  const initialRef = useRef();
+  const finalRef = useRef();
+
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  const asButton = useBreakpointValue({ base: IconButton, md: Button })
+  async function handleSubmite() {
+    isLoading = true;
 
-  const isMdVerison = useBreakpointValue({
-    base: false,
-    md: true,
-  });
+    await createUser({ name, email });
 
-  function handleSubmite() {
+    isLoading = false;
 
-    console.log(nome, email)
-
+    onClose();
   }
 
   return (
-    <>
-      <Button
-        onClick={onOpen}
-        as={asButton}
-        size="sm"
-        fontSize="sm"
-        colorScheme="green"
-        leftIcon={<Icon as={FaPlus} fontSize="16" />}
-        icon={<Icon as={FaPlus} fontSize="16" />}
-        title="Cadastrar Usuário"
-      >
-        {isMdVerison && <Text>Cadastrar Usuário</Text>}
-      </Button>
+    <Modal
+      initialFocusRef={initialRef}
+      finalFocusRef={finalRef}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Cadastrar Usuário</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          <FormControl>
+            <FormLabel>Nome</FormLabel>
+            <Input
+              ref={initialRef}
+              placeholder="Nome"
+              focusBorderColor="green.500"
+              onChange={e => setName(e.target.value)}
+            />
+          </FormControl>
 
-      <Modal
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
-        isOpen={isOpen}
-        onClose={onClose}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Cadastrar Usuário</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Nome</FormLabel>
-              <Input
-                ref={initialRef}
-                placeholder="Nome"
-                focusBorderColor="green.500"
-                onChange={e => setNome(e.target.value)}
-              />
-            </FormControl>
+          <FormControl mt={4}>
+            <FormLabel>E-mail</FormLabel>
+            <Input
+              placeholder="E-mail"
+              focusBorderColor="green.500"
+              onChange={e => setEmail(e.target.value)}
+            />
+          </FormControl>
+        </ModalBody>
 
-            <FormControl mt={4}>
-              <FormLabel>E-mail</FormLabel>
-              <Input
-                placeholder="E-mail"
-                focusBorderColor="green.500"
-                onChange={e => setEmail(e.target.value)}
-              />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="green" mr={3} onClick={handleSubmite}>
-              Salvar
-            </Button>
-            <Button onClick={onClose}>Cancelar</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+        <ModalFooter>
+          <Button
+            mr={3}
+            isLoading={isLoading}
+            colorScheme="green"
+            onClick={handleSubmite}>
+            Salvar
+          </Button>
+          <Button onClick={onClose}>Cancelar</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   )
 }

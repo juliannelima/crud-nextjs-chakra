@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
   Flex,
@@ -15,14 +15,14 @@ import {
   Icon,
   Stack,
   Text,
-  useBreakpointValue
+  useBreakpointValue,
 } from '@chakra-ui/react';
 
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
-import { getUsers } from '../services/hooks/useUsers';
-
 import { FormModal } from '../components/FormModal';
+
+import { useUsers } from '../context/UseUsersContext';
 
 
 type User = {
@@ -33,8 +33,9 @@ type User = {
 }
 
 export default function Home() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [page, setPage] = useState(1);
+  const { users } = useUsers();
+
+  const [isOpenFormModal, setIsOpenFormModal] = useState(false);
 
   const isLgVerison = useBreakpointValue({
     base: false,
@@ -48,9 +49,9 @@ export default function Home() {
 
   const asButton = useBreakpointValue({ base: IconButton, md: Button })
 
-  useEffect(() => {
-    getUsers(1).then(response => setUsers(response.users))
-  } , [])
+  function handleToggleFormModal(){
+    setIsOpenFormModal(!isOpenFormModal);
+  }
 
   return (
     <Flex
@@ -74,7 +75,19 @@ export default function Home() {
           >
             Gerenciador de Usuários
           </Heading>
-          <FormModal></FormModal>
+          <Button
+            onClick={handleToggleFormModal}
+            as={asButton}
+            size="sm"
+            fontSize="sm"
+            colorScheme="green"
+            leftIcon={<Icon as={FaPlus} fontSize="16" />}
+            icon={<Icon as={FaPlus} fontSize="16" />}
+            title="Cadastrar Usuário"
+          >
+            {isMdVerison && <Text>Cadastrar Usuário</Text>}
+          </Button>
+          <FormModal isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
         </Flex>
 
         <Box
