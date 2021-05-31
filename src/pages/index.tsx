@@ -4,12 +4,11 @@ import {
   Flex,
   Box,
   Heading,
-  Text,
   Table,
   Thead,
+  Tbody,
   Tr,
   Th,
-  Tbody,
   Td,
   Button,
   IconButton,
@@ -22,6 +21,8 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 import { getUsers } from '../services/hooks/useUsers';
 
+import { FormModal } from '../components/FormModal';
+
 
 type User = {
   id: string,
@@ -32,6 +33,7 @@ type User = {
 
 export default function Home() {
   const [users, setUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
 
   const isLgVerison = useBreakpointValue({
     base: false,
@@ -57,8 +59,8 @@ export default function Home() {
       px="6"
       my="6"
     >
-
       <Box flex="1" p="4" bg="white">
+
         <Flex
           justify="space-between"
           align="center"
@@ -71,16 +73,7 @@ export default function Home() {
           >
             Gerenciador de Usuários
           </Heading>
-          <Button
-            as={useBreakpointValue({ base: IconButton, md: Button })}
-            size="sm"
-            fontSize="sm"
-            colorScheme="green"
-            leftIcon={<Icon as={FaPlus} fontSize="16" />}
-            icon={<Icon as={FaPlus} fontSize="16" />}
-          >
-            Criar novo
-          </Button>
+          <FormModal></FormModal>
         </Flex>
 
         <Box
@@ -113,6 +106,7 @@ export default function Home() {
                         fontSize="sm"
                         leftIcon={<Icon as={FaEdit} fontSize="16"/>}
                         icon={<Icon as={FaEdit} fontSize="16"/>}
+                        title="Editar Usuário"
                       >
                         Editar
                       </Button>
@@ -124,8 +118,8 @@ export default function Home() {
                         size="sm"
                         fontSize="sm"
                         leftIcon={<Icon as={FaTrash} fontSize="16" />}
-                        icon={<Icon as={FaTrash}
-                        fontSize="16"/>}
+                        icon={<Icon as={FaTrash} fontSize="16"/>}
+                        title="Apagar Usuário"
                       >
                         Apagar
                       </Button>
