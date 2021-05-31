@@ -1,7 +1,10 @@
-CRUD
+CRUD - Gerenciador de Usuários
 
-## Tecnologias 
+## Tecnologias
 - Next.js
 - Chakra
+- miragejs
+- axios
+- faker
 
 

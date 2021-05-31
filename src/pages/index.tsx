@@ -33,7 +33,7 @@ type User = {
 }
 
 export default function Home() {
-  const { users } = useUsers();
+  const { users, deleteUser } = useUsers();
 
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
 
@@ -51,6 +51,10 @@ export default function Home() {
 
   function handleToggleFormModal(){
     setIsOpenFormModal(!isOpenFormModal);
+  }
+
+  async function handleDeleteUser(id: string) {
+    await deleteUser(id);
   }
 
   return (
@@ -134,6 +138,7 @@ export default function Home() {
                         leftIcon={<Icon as={FaTrash} fontSize="16" />}
                         icon={<Icon as={FaTrash} fontSize="16"/>}
                         title="Apagar Usuário"
+                        onClick={() => handleDeleteUser(user.id)}
                       >
                         {isMdVerison && <Text>Apagar</Text>}
                       </Button>

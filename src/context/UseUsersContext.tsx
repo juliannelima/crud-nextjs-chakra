@@ -13,12 +13,13 @@ interface IUser {
   id?: string
   name: string;
   email: string;
-  createdAt?: Date;
+  createdAt?: string;
 }
 
 interface UsersContextProps {
   users: IUser[];
   createUser: (user: IUser) => Promise<void>,
+  deleteUser: (id: string) => Promise<void>,
 }
 
 interface UsersProviderProps {
@@ -36,21 +37,31 @@ export function UsersProvider({ children }: UsersProviderProps) {
 
   async function createUser(user: IUser) {
     try {
-      const response = await api.post('users', {
+      await api.post('users', {
         user: {
           ...user,
-          created_at: new Date(),
+          createdAt: new Date()
         }
       })
 
-      setUsers([...users, response.data.user ])
-    }catch(err){
-      console.log(err)
+      await getUsers(1).then(response => setUsers(response.users))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  async function deleteUser(id: string) {
+    try {
+      await api.delete(`users/${id}`)
+
+      await getUsers(1).then(response => setUsers(response.users))
+    }catch(error){
+      console.log(error)
     }
   }
 
   return (
-    <UsersContext.Provider value={{ users, createUser }}>
+    <UsersContext.Provider value={{ users, createUser, deleteUser }}>
       {children}
     </UsersContext.Provider>
   )
