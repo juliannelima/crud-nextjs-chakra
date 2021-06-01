@@ -65,6 +65,7 @@ export function makeServer() {
       this.get('/users/:id');
       this.post('/users');
       this.delete('/users/:id');
+      this.put('/users/:id');
 
       this.namespace = '';
       this.passthrough();

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Button,
@@ -23,25 +23,48 @@ import { FaPlus } from 'react-icons/fa';
 import { useUsers } from "../../context/UseUsersContext";
 
 interface FormModalProps {
+  idUser: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function FormModal({ isOpen, onClose }: FormModalProps) {
-  const { createUser } = useUsers();
+export function FormModal({idUser = null, isOpen, onClose }: FormModalProps) {
+  const { getUser, createUser, updateUser } = useUsers();
 
   let isLoading = false;
 
   const initialRef = useRef();
   const finalRef = useRef();
 
+  const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    setId('')
+    setName('')
+    setEmail('')
+    if(idUser) {
+      getUser(idUser).then(response => {
+        setId(response.id)
+        setName(response.name)
+        setEmail(response.email)
+      })
+    }
+  }, [idUser])
 
   async function handleSubmite() {
     isLoading = true;
 
-    await createUser({ name, email });
+    if(id) {
+      await updateUser({id, name, email})
+
+    } else {
+      await createUser({ name, email });
+    }
+    setId('')
+    setName('')
+    setEmail('')
 
     isLoading = false;
 
@@ -67,6 +90,7 @@ export function FormModal({ isOpen, onClose }: FormModalProps) {
               placeholder="Nome"
               focusBorderColor="green.500"
               onChange={e => setName(e.target.value)}
+              value={name}
             />
           </FormControl>
 
@@ -76,6 +100,7 @@ export function FormModal({ isOpen, onClose }: FormModalProps) {
               placeholder="E-mail"
               focusBorderColor="green.500"
               onChange={e => setEmail(e.target.value)}
+              value={email}
             />
           </FormControl>
         </ModalBody>

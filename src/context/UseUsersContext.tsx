@@ -18,7 +18,9 @@ interface IUser {
 
 interface UsersContextProps {
   users: IUser[];
+  getUser: (id: string) => Promise<IUser>,
   createUser: (user: IUser) => Promise<void>,
+  updateUser: (user: IUser) => Promise<void>,
   deleteUser: (id: string) => Promise<void>,
 }
 
@@ -50,9 +52,13 @@ export function UsersProvider({ children }: UsersProviderProps) {
     }
   }
 
-  async function deleteUser(id: string) {
+  async function updateUser(user: IUser) {
     try {
-      await api.delete(`users/${id}`)
+      await api.put(`users/${user.id}`, {
+        user: {
+          ...user,
+        }
+      })
 
       await getUsers(1).then(response => setUsers(response.users))
     }catch(error){
@@ -60,8 +66,30 @@ export function UsersProvider({ children }: UsersProviderProps) {
     }
   }
 
+  async function deleteUser(id: string) {
+    try {
+      await api.delete(`users/${id}`)
+
+      setUsers(users.filter(user => user.id !== id))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  async function getUser(id: string) {
+    try {
+      const response = await api.get(`users/${id}`)
+
+      return response.data.user;
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   return (
-    <UsersContext.Provider value={{ users, createUser, deleteUser }}>
+    <UsersContext.Provider value={
+      { users, getUser, createUser, updateUser, deleteUser }
+    }>
       {children}
     </UsersContext.Provider>
   )

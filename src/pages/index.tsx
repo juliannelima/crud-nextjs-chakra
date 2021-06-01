@@ -36,6 +36,7 @@ export default function Home() {
   const { users, deleteUser } = useUsers();
 
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+  const [user, setUser] = useState(null);
 
   const isLgVerison = useBreakpointValue({
     base: false,
@@ -50,6 +51,12 @@ export default function Home() {
   const asButton = useBreakpointValue({ base: IconButton, md: Button })
 
   function handleToggleFormModal(){
+    setIsOpenFormModal(!isOpenFormModal);
+  }
+
+  async function handleUpdateUser(id: string) {
+    console.log(id);
+    setUser(id);
     setIsOpenFormModal(!isOpenFormModal);
   }
 
@@ -91,7 +98,7 @@ export default function Home() {
           >
             {isMdVerison && <Text>Cadastrar Usuário</Text>}
           </Button>
-          <FormModal isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
+          <FormModal idUser={user} isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
         </Flex>
 
         <Box
@@ -118,6 +125,7 @@ export default function Home() {
                     {isLgVerison && <Td>{user.createdAt}</Td>}
                     <Td>
                       <Button
+                        onClick={() => handleUpdateUser(user.id)}
                         as={asButton}
                         variant="outline"
                         size="sm"
