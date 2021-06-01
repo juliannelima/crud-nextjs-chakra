@@ -39,14 +39,25 @@ export function UsersProvider({ children }: UsersProviderProps) {
 
   async function createUser(user: IUser) {
     try {
-      await api.post('users', {
+      const response = await api.post('users', {
         user: {
           ...user,
           createdAt: new Date()
         }
       })
 
-      await getUsers(1).then(response => setUsers(response.users))
+      const newUser = response.data.user
+
+      setUsers([...users, {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        createdAt: new Date(newUser.created_at).toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
+      }])
     }catch(error){
       console.log(error)
     }
@@ -54,13 +65,26 @@ export function UsersProvider({ children }: UsersProviderProps) {
 
   async function updateUser(user: IUser) {
     try {
-      await api.put(`users/${user.id}`, {
+      const response = await api.put(`users/${user.id}`, {
         user: {
           ...user,
         }
       })
 
-      await getUsers(1).then(response => setUsers(response.users))
+      const newUser = response.data.user
+
+
+      setUsers(users.map(user => {
+        if(user.id === newUser.id){
+          return {
+            ...user,
+            name: newUser.name,
+            email: newUser.email,
+          }
+        } else {
+          return user
+        }
+      }))
     }catch(error){
       console.log(error)
     }

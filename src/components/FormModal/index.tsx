@@ -12,26 +12,32 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useBreakpointValue,
-  IconButton,
-  Icon,
-  Text
+  useToast,
 } from "@chakra-ui/react";
 
 import { FaPlus } from 'react-icons/fa';
 
 import { useUsers } from "../../context/UseUsersContext";
 
+type User = {
+  id: string,
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 interface FormModalProps {
-  idUser: string;
+  user: User;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function FormModal({idUser = null, isOpen, onClose }: FormModalProps) {
-  const { getUser, createUser, updateUser } = useUsers();
+let isLoading = false;
 
-  let isLoading = false;
+export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
+  const { createUser, updateUser } = useUsers();
+
+  const toast = useToast();
 
   const initialRef = useRef();
   const finalRef = useRef();
@@ -44,31 +50,43 @@ export function FormModal({idUser = null, isOpen, onClose }: FormModalProps) {
     setId('')
     setName('')
     setEmail('')
-    if(idUser) {
-      getUser(idUser).then(response => {
-        setId(response.id)
-        setName(response.name)
-        setEmail(response.email)
-      })
+
+    if(user) {
+       setId(user.id)
+        setName(user.name)
+        setEmail(user.email)
     }
-  }, [idUser])
+  }, [user])
 
   async function handleSubmite() {
     isLoading = true;
+    let msg = undefined;
 
     if(id) {
       await updateUser({id, name, email})
-
+      msg = `Usuário ${name} alterado com sucesso.`;
     } else {
       await createUser({ name, email });
+      msg = `Usuário ${name} salvo com sucesso.`;
     }
+
+    if(msg) {
+      toast({
+        description:msg,
+        status: "success",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
+    onClose();
+
     setId('')
     setName('')
     setEmail('')
 
     isLoading = false;
-
-    onClose();
   }
 
   return (

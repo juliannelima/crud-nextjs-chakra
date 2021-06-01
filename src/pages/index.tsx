@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
   useBreakpointValue,
+  useToast,
 } from '@chakra-ui/react';
 
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
@@ -25,15 +26,10 @@ import { FormModal } from '../components/FormModal';
 import { useUsers } from '../context/UseUsersContext';
 
 
-type User = {
-  id: string,
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
 export default function Home() {
   const { users, deleteUser } = useUsers();
+
+  const toast = useToast();
 
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
   const [user, setUser] = useState(null);
@@ -54,14 +50,21 @@ export default function Home() {
     setIsOpenFormModal(!isOpenFormModal);
   }
 
-  async function handleUpdateUser(id: string) {
-    console.log(id);
-    setUser(id);
+  async function handleUpdateUser(user) {
+    setUser(user);
     setIsOpenFormModal(!isOpenFormModal);
   }
 
-  async function handleDeleteUser(id: string) {
-    await deleteUser(id);
+  async function handleDeleteUser(user) {
+    await deleteUser(user.id);
+
+    toast({
+      description: `Usuário ${user.name} excluído com sucesso.`,
+      status: "success",
+      position: "top-right",
+      duration: 9000,
+      isClosable: true,
+    });
   }
 
   return (
@@ -98,7 +101,7 @@ export default function Home() {
           >
             {isMdVerison && <Text>Cadastrar Usuário</Text>}
           </Button>
-          <FormModal idUser={user} isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
+          <FormModal user={user} isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
         </Flex>
 
         <Box
@@ -125,7 +128,7 @@ export default function Home() {
                     {isLgVerison && <Td>{user.createdAt}</Td>}
                     <Td>
                       <Button
-                        onClick={() => handleUpdateUser(user.id)}
+                        onClick={() => handleUpdateUser(user)}
                         as={asButton}
                         variant="outline"
                         size="sm"
@@ -146,7 +149,7 @@ export default function Home() {
                         leftIcon={<Icon as={FaTrash} fontSize="16" />}
                         icon={<Icon as={FaTrash} fontSize="16"/>}
                         title="Apagar Usuário"
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleDeleteUser(user)}
                       >
                         {isMdVerison && <Text>Apagar</Text>}
                       </Button>
