@@ -59,15 +59,15 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
   const finalRef = useRef();
 
   useEffect(() => {
+    reset({
+      name: '',
+      email: ''
+    });
+
     if(user) {
       reset({
         name: user.name,
         email: user.email
-      });
-    } else {
-      reset({
-        name: '',
-        email: ''
       });
     }
   }, [user])
