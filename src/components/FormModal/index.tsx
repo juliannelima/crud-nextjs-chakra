@@ -63,7 +63,9 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
       name: '',
       email: ''
     });
+  }, [isOpen])
 
+  useEffect(() => {
     if(user) {
       reset({
         name: user.name,
