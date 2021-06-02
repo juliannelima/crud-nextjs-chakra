@@ -6,5 +6,7 @@ CRUD - Gerenciador de Usuários
 - miragejs
 - axios
 - faker
+- react-hook-form
+- yup
 
 

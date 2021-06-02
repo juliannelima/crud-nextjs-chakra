@@ -50,6 +50,11 @@ export default function Home() {
     setIsOpenFormModal(!isOpenFormModal);
   }
 
+  async function handleCreateUser() {
+    setUser(null);
+    setIsOpenFormModal(!isOpenFormModal);
+  }
+
   async function handleUpdateUser(user) {
     setUser(user);
     setIsOpenFormModal(!isOpenFormModal);
@@ -61,8 +66,8 @@ export default function Home() {
     toast({
       description: `Usuário ${user.name} excluído com sucesso.`,
       status: "success",
-      position: "top-right",
-      duration: 9000,
+      position: "top",
+      duration: 2000,
       isClosable: true,
     });
   }
@@ -90,7 +95,7 @@ export default function Home() {
             Gerenciador de Usuários
           </Heading>
           <Button
-            onClick={handleToggleFormModal}
+            onClick={handleCreateUser}
             as={asButton}
             size="sm"
             fontSize="sm"

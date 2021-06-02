@@ -11,13 +11,19 @@ import {
   ModalFooter,
   FormControl,
   FormLabel,
-  Input,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 
-import { FaPlus } from 'react-icons/fa';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+import * as yup from 'yup';
+
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useUsers } from "../../context/UseUsersContext";
+
+import { Input } from '../../components/Form/Input';
 
 type User = {
   id: string,
@@ -34,57 +40,61 @@ interface FormModalProps {
 
 let isLoading = false;
 
+const createUserFormSchema = yup.object().shape({
+  name: yup.string().required('Nome obrigatório'),
+  email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
+})
+
 export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
   const { createUser, updateUser } = useUsers();
+
+  const { register, handleSubmit, formState, reset } = useForm({
+    resolver: yupResolver(createUserFormSchema)
+  });
+  const { errors } = formState;
 
   const toast = useToast();
 
   const initialRef = useRef();
   const finalRef = useRef();
 
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-
   useEffect(() => {
-    setId('')
-    setName('')
-    setEmail('')
-
     if(user) {
-       setId(user.id)
-        setName(user.name)
-        setEmail(user.email)
+      reset({
+        name: user.name,
+        email: user.email
+      });
+    } else {
+      reset({
+        name: '',
+        email: ''
+      });
     }
   }, [user])
 
-  async function handleSubmite() {
+  const handleCreateUser: SubmitHandler<User> = async (values) => {
     isLoading = true;
     let msg = undefined;
 
-    if(id) {
-      await updateUser({id, name, email})
-      msg = `Usuário ${name} alterado com sucesso.`;
+    if(user) {
+      await updateUser({id:user.id, ...values})
+      msg = `Usuário ${values.name} alterado com sucesso.`;
     } else {
-      await createUser({ name, email });
-      msg = `Usuário ${name} salvo com sucesso.`;
+      await createUser(values);
+      msg = `Usuário ${values.name} salvo com sucesso.`;
     }
 
     if(msg) {
       toast({
         description:msg,
         status: "success",
-        position: "top-right",
-        duration: 9000,
+        position: "top",
+        duration: 2000,
         isClosable: true,
       });
     }
 
     onClose();
-
-    setId('')
-    setName('')
-    setEmail('')
 
     isLoading = false;
   }
@@ -100,39 +110,38 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
       <ModalContent>
         <ModalHeader>Cadastrar Usuário</ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={6}>
-          <FormControl>
-            <FormLabel>Nome</FormLabel>
+        <Box as="form" onSubmit={handleSubmit(handleCreateUser)}>
+          <ModalBody pb={6}>
             <Input
               ref={initialRef}
               placeholder="Nome"
               focusBorderColor="green.500"
-              onChange={e => setName(e.target.value)}
-              value={name}
+              error={errors.name}
+              {...register('name')}
             />
-          </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>E-mail</FormLabel>
             <Input
+              mt={4}
               placeholder="E-mail"
               focusBorderColor="green.500"
-              onChange={e => setEmail(e.target.value)}
-              value={email}
+              error={errors.email}
+              {...register('email')}
             />
-          </FormControl>
-        </ModalBody>
+          </ModalBody>
 
-        <ModalFooter>
-          <Button
-            mr={3}
-            isLoading={isLoading}
-            colorScheme="green"
-            onClick={handleSubmite}>
-            Salvar
-          </Button>
-          <Button onClick={onClose}>Cancelar</Button>
-        </ModalFooter>
+          <ModalFooter>
+            <Button
+              mr={3}
+              isLoading={isLoading}
+              colorScheme="green"
+              type="submit"
+          >
+              Salvar
+            </Button>
+
+            <Button onClick={onClose}>Cancelar</Button>
+          </ModalFooter>
+        </Box>
       </ModalContent>
     </Modal>
   )
