@@ -26,7 +26,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
     <ChakraInput
       name={name}
       id={name}
-      focusBorderColor="green.500"
+      focusBorderColor={error ? "red" : "green.500"}
       ref={ref}
       {...rest}
     />

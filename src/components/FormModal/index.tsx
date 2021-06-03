@@ -9,8 +9,6 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  FormControl,
-  FormLabel,
   useToast,
   Box,
 } from "@chakra-ui/react";
@@ -91,7 +89,7 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
         description:msg,
         status: "success",
         position: "top",
-        duration: 2000,
+        duration: 4000,
         isClosable: true,
       });
     }
@@ -109,7 +107,7 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
       onClose={onClose}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent mx={2}>
         <ModalHeader>Cadastrar Usuário</ModalHeader>
         <ModalCloseButton />
         <Box as="form" onSubmit={handleSubmit(handleCreateUser)}>
@@ -117,7 +115,6 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
             <Input
               ref={initialRef}
               placeholder="Nome"
-              focusBorderColor="green.500"
               error={errors.name}
               {...register('name')}
             />
@@ -125,7 +122,6 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
             <Input
               mt={4}
               placeholder="E-mail"
-              focusBorderColor="green.500"
               error={errors.email}
               {...register('email')}
             />

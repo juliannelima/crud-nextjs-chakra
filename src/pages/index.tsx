@@ -17,6 +17,8 @@ import {
   Text,
   useBreakpointValue,
   useToast,
+  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
@@ -27,6 +29,10 @@ import { useUsers } from '../context/UseUsersContext';
 
 
 export default function Home() {
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+
   const { users, deleteUser } = useUsers();
 
   const toast = useToast();
@@ -67,7 +73,7 @@ export default function Home() {
       description: `Usuário ${user.name} excluído com sucesso.`,
       status: "success",
       position: "top",
-      duration: 2000,
+      duration: 4000,
       isClosable: true,
     });
   }
@@ -79,9 +85,18 @@ export default function Home() {
       mx="auto"
       px="6"
       my="6"
+      direction="column"
     >
-      <Box flex="1" p="4" bg="white">
+      <Button onClick={toggleColorMode} my="4" maxWidth={120} ml="auto" colorScheme="green">
+        Tema {colorMode === "light" ? "Dark" : "Light"}
+      </Button>
 
+      <Box
+        flex="1"
+        p="4"
+        bg={colorMode === "light" ? "white" : "gray.700"}
+        borderRadius="md"
+      >
         <Flex
           justify="space-between"
           align="center"
@@ -90,7 +105,7 @@ export default function Home() {
           <Heading
             fontSize={["sm", "lg", "xl"]}
             fontWeight="black"
-            color="gray.600"
+            color={colorMode === "light" ? "gray.600" : "gray.200"}
           >
             Gerenciador de Usuários
           </Heading>
@@ -106,16 +121,20 @@ export default function Home() {
           >
             {isMdVerison && <Text>Cadastrar Usuário</Text>}
           </Button>
-          <FormModal user={user} isOpen={isOpenFormModal} onClose={handleToggleFormModal}></FormModal>
+          <FormModal
+            user={user}
+            isOpen={isOpenFormModal}
+            onClose={handleToggleFormModal}
+          />
         </Flex>
 
         <Box
           border="1px"
           borderRadius="sm"
-          borderColor="gray.200"
+          borderColor={borderColor}
         >
           <Table size="sm">
-            <Thead bg="gray.200">
+            <Thead bg={colorMode === "light" ? "gray.200" : "gray.600"}>
               <Tr>
                 <Th>Nome</Th>
                 {isMdVerison && <Th>E-mail</Th>}
@@ -128,10 +147,10 @@ export default function Home() {
               {users.map(user => {
                 return (
                   <Tr key={user.id}>
-                    <Td>{user.name}</Td>
-                    {isMdVerison && <Td>{user.email}</Td>}
-                    {isLgVerison && <Td>{user.createdAt}</Td>}
-                    <Td>
+                    <Td borderColor={borderColor}>{user.name}</Td>
+                    {isMdVerison && <Td borderColor={borderColor}>{user.email}</Td>}
+                    {isLgVerison && <Td borderColor={borderColor}>{user.createdAt}</Td>}
+                    <Td borderColor={borderColor}>
                       <Button
                         onClick={() => handleUpdateUser(user)}
                         as={asButton}
@@ -145,7 +164,7 @@ export default function Home() {
                         {isMdVerison && <Text>Editar</Text>}
                       </Button>
                     </Td>
-                    <Td>
+                    <Td borderColor={borderColor}>
                       <Button
                         as={asButton}
                         variant="outline"
