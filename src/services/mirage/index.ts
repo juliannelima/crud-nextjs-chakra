@@ -46,14 +46,36 @@ export function makeServer() {
       this.timing = 750;
 
       this.get('/users', function(schema, request) {
-        const { page = 1, per_page = 10 } = request.queryParams;
+        const {
+          page = 1,
+          per_page = 10,
+          name = null,
+        } = request.queryParams;
 
-        const total = schema.all('user').length;
+        let usersList = this.serialize(schema.all('user')).users
+
+        if(name) {
+          usersList = usersList.reduce((accumulator, currentValue) => {
+            if(
+              name &&
+              (
+               currentValue.name.toLowerCase().indexOf(name.toLowerCase()) > -1 ||
+               currentValue.email.toLowerCase().indexOf(name.toLowerCase()) > -1
+              )
+            ){
+              accumulator = [...accumulator, currentValue]
+            }
+
+            return accumulator
+          }, [])
+        }
+
+        const total = usersList.length;
 
         const pageStart = (Number(page) - 1) * Number(per_page);
         const pageEnd = pageStart + Number(per_page);
 
-        const users = this.serialize(schema.all('user')).users.slice(pageStart, pageEnd);
+        const users = usersList.slice(pageStart, pageEnd);
 
         return new Response(
           200,

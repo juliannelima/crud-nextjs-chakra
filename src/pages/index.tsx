@@ -7,13 +7,14 @@ import {
   Table,
   Thead,
   Tbody,
+  Tfoot,
   Tr,
   Th,
   Td,
+  Input,
   Button,
   IconButton,
   Icon,
-  Stack,
   Text,
   useBreakpointValue,
   useToast,
@@ -21,7 +22,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 
 import { FormModal } from '../components/FormModal';
 
@@ -48,7 +49,10 @@ export default function Home() {
   const toast = useToast();
 
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+
   const [user, setUser] = useState(null);
+
+  const [valueSearch, setValueSearch] = useState('');
 
   const isLgVerison = useBreakpointValue({
     base: false,
@@ -90,6 +94,14 @@ export default function Home() {
     });
   }
 
+  async function handleSearchUser(value: string) {
+    if(value.length >= 3) {
+      getUsers(page, value)
+    } else if (value.length === 0 ){
+      getUsers(1)
+    }
+  }
+
   return (
     <Flex
       w="100%"
@@ -109,21 +121,50 @@ export default function Home() {
         bg={colorMode === "light" ? "white" : "gray.700"}
         borderRadius="md"
       >
+        <Heading
+          py="2"
+          fontSize={["sm", "lg", "xl"]}
+          fontWeight="black"
+          color={colorMode === "light" ? "gray.600" : "gray.200"}
+        >
+          Gerenciador de Usuários
+        </Heading>
+
         <Flex
           justify="space-between"
           align="center"
           py="2"
         >
-          <Heading
-            fontSize={["sm", "lg", "xl"]}
-            fontWeight="black"
-            color={colorMode === "light" ? "gray.600" : "gray.200"}
-          >
-            Gerenciador de Usuários
-          </Heading>
+          <Flex
+            flex="1"
+            direction="row"
+            border="1px"
+            borderRadius="md"
+            borderColor={borderColor}
+           >
+            <IconButton
+              size="sm"
+              borderRadius="0"
+              aria-label="pesquisar-usuario"
+              icon={<Icon as={FaSearch} fontSize="16" />}
+              onClick={() =>  handleSearchUser(valueSearch)}
+            />
+            <Input
+              size="sm"
+              border="0"
+              focusBorderColor="green.500"
+              placeholder="Pesquisar..."
+              onChange={e => {
+                handleSearchUser(e.target.value)
+                setValueSearch(e.target.value)
+              }}
+            />
+          </Flex>
+
           <Button
             onClick={handleCreateUser}
             as={asButton}
+            ml="4"
             size="sm"
             fontSize="sm"
             colorScheme="green"
@@ -133,6 +174,7 @@ export default function Home() {
           >
             {isMdVerison && <Text>Cadastrar Usuário</Text>}
           </Button>
+
           <FormModal
             user={user}
             isOpen={isOpenFormModal}
@@ -194,15 +236,21 @@ export default function Home() {
                 )
               })}
             </Tbody>
-          </Table>
 
-          <Box px="4" my="4">
-            <Pagination
-              totalCountOfRegisters={totalCount}
-              currentPage={page}
-              onPageChange={setPage}
-            />
-          </Box>
+            { totalCount > 10 && (
+              <Tfoot>
+                <Tr>
+                  <Td colSpan={5}>
+                    <Pagination
+                      totalCountOfRegisters={totalCount}
+                      currentPage={page}
+                      onPageChange={setPage}
+                    />
+                  </Td>
+                </Tr>
+              </Tfoot>
+            )}
+          </Table>
         </Box>
       </Box>
     </Flex>

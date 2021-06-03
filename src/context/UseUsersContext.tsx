@@ -18,7 +18,7 @@ interface UsersContextProps {
   users: IUser[];
   totalCount: number;
   getUser: (id: string) => Promise<IUser>,
-  getUsers: (page: number) => void;
+  getUsers: (page: number, search?: null | string) => void;
   createUser: (user: IUser) => Promise<void>,
   updateUser: (user: IUser) => Promise<void>,
   deleteUser: (id: string) => Promise<void>,
@@ -39,10 +39,11 @@ export function UsersProvider({ children }: UsersProviderProps) {
     getUsers(1)
   } , [])
 
-  async function getUsers(page: number): Promise<void> {
+  async function getUsers(page: number, search = null): Promise<void> {
     const { data, headers } = await api.get('users', {
       params: {
         page,
+        name: search,
       }
     })
 
