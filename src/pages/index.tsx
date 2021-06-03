@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Flex,
@@ -27,13 +27,23 @@ import { FormModal } from '../components/FormModal';
 
 import { useUsers } from '../context/UseUsersContext';
 
+import { Pagination } from '../components/Pagination';
+
+interface IUser {
+  id?: string
+  name: string;
+  email: string;
+  createdAt?: string;
+}
 
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
-  const { users, deleteUser } = useUsers();
+  const { users, getUsers, deleteUser, totalCount } = useUsers();
+
+  const [page, setPage] = useState(1);
 
   const toast = useToast();
 
@@ -51,6 +61,8 @@ export default function Home() {
   });
 
   const asButton = useBreakpointValue({ base: IconButton, md: Button })
+
+  useEffect(() => { getUsers(page) }, [page])
 
   function handleToggleFormModal(){
     setIsOpenFormModal(!isOpenFormModal);
@@ -184,58 +196,13 @@ export default function Home() {
             </Tbody>
           </Table>
 
-          <Stack
-            direction={["column", "row"]}
-            my="4"
-            justify="space-between"
-            align="center"
-            spacing="6"
-            px="4"
-          >
-            <Box fontSize="sm">
-              <strong>1</strong> - <strong>10</strong> de <strong>100</strong>
-            </Box>
-            <Stack direction="row" spacing="2">
-              <Button
-                variant="outline"
-                colorScheme="green"
-                size="sm"
-                fontSize="xs"
-                width="4"
-                _hover={{
-                  bg: 'green.300',
-                  color: 'white'
-                }}
-              >
-                1
-              </Button>
-              <Button
-                size="sm"
-                fontSize="xs"
-                width="4"
-                colorScheme="green"
-                _hover={{
-                  bg: 'green.300',
-                  color: 'white'
-                }}
-              >
-                2
-              </Button>
-              <Button
-                variant="outline"
-                colorScheme="green"
-                size="sm"
-                fontSize="xs"
-                width="4"
-                _hover={{
-                  bg: 'green.300',
-                  color: 'white'
-                }}
-              >
-                3
-              </Button>
-            </Stack>
-          </Stack>
+          <Box px="4" my="4">
+            <Pagination
+              totalCountOfRegisters={totalCount}
+              currentPage={page}
+              onPageChange={setPage}
+            />
+          </Box>
         </Box>
       </Box>
     </Flex>
