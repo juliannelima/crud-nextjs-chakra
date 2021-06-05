@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   Flex,
@@ -29,6 +29,7 @@ import { FormModal } from '../components/FormModal';
 import { useUsers } from '../context/UseUsersContext';
 
 import { Pagination } from '../components/Pagination';
+import { debounce } from 'lodash';
 
 interface IUser {
   id?: string
@@ -94,9 +95,14 @@ export default function Home() {
     });
   }
 
+  const debouncedSearchUser = useCallback(
+    debounce(value => getUsers(page, value), 750)
+    , []
+  )
+
   async function handleSearchUser(value: string) {
     if(value.length >= 3) {
-      getUsers(page, value)
+      debouncedSearchUser(value)
     } else if (value.length === 0 ){
       getUsers(1)
     }
