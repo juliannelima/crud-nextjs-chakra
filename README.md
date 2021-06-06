@@ -2,7 +2,7 @@ CRUD - Gerenciador de Usuários
 
 ## Tecnologias
 - [Next.js](https://nextjs.org/)
-- [Chakra](https://chakra-ui.com/)
+- [Chakra-ui](https://chakra-ui.com/)
 - [miragejs](https://miragejs.com/)
 - [axios](https://axios-http.com/)
 - [faker](https://www.npmjs.com/package/faker)
