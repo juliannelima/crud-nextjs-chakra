@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import {
   Button,
@@ -72,7 +72,7 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
     }
   }, [user])
 
-  const handleCreateUser: SubmitHandler<User> = async (values) => {
+  const handleCreateUser: SubmitHandler<User> = useCallback(async (values) => {
     isLoading = true;
     let msg = undefined;
 
@@ -97,7 +97,7 @@ export function FormModal({user = null, isOpen, onClose }: FormModalProps) {
     onClose();
 
     isLoading = false;
-  }
+  }, [toast, onClose]);
 
   return (
     <Modal

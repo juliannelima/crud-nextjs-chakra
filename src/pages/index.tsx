@@ -11,25 +11,26 @@ import {
   Tr,
   Th,
   Td,
+  Icon,
+  Text,
   Input,
   Button,
   IconButton,
-  Icon,
-  Text,
-  useBreakpointValue,
   useToast,
   useColorMode,
   useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
+
+import { debounce } from 'lodash';
 
 import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 
-import { FormModal } from '../components/FormModal';
-
 import { useUsers } from '../context/UseUsersContext';
 
+import { FormModal } from '../components/FormModal';
+
 import { Pagination } from '../components/Pagination';
-import { debounce } from 'lodash';
 
 interface IUser {
   id?: string
@@ -45,15 +46,16 @@ export default function Home() {
 
   const { users, getUsers, deleteUser, totalCount } = useUsers();
 
-  const [page, setPage] = useState(1);
-
   const toast = useToast();
 
-  const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [user, setUser] = useState(null);
 
   const [valueSearch, setValueSearch] = useState('');
+
+  const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+
 
   const isLgVerison = useBreakpointValue({
     base: false,
@@ -102,9 +104,9 @@ export default function Home() {
 
   async function handleSearchUser(value: string) {
     if(value.length >= 3) {
-      debouncedSearchUser(value)
+      debouncedSearchUser(value);
     } else if (value.length === 0 ){
-      getUsers(1)
+      getUsers(1);
     }
   }
 
@@ -117,7 +119,13 @@ export default function Home() {
       my="6"
       direction="column"
     >
-      <Button onClick={toggleColorMode} my="4" maxWidth={120} ml="auto" colorScheme="green">
+      <Button
+        maxWidth={120}
+        my="4"
+        ml="auto"
+        colorScheme="green"
+        onClick={toggleColorMode}
+      >
         Tema {colorMode === "light" ? "Dark" : "Light"}
       </Button>
 
@@ -144,6 +152,7 @@ export default function Home() {
           <Flex
             flex="1"
             direction="row"
+            align="center"
             border="1px"
             borderRadius="md"
             borderColor={borderColor}
@@ -155,11 +164,13 @@ export default function Home() {
               icon={<Icon as={FaSearch} fontSize="16" />}
               onClick={() =>  handleSearchUser(valueSearch)}
             />
+
             <Input
               size="sm"
               border="0"
               focusBorderColor="green.500"
               placeholder="Pesquisar..."
+              value={valueSearch}
               onChange={e => {
                 handleSearchUser(e.target.value)
                 setValueSearch(e.target.value)
@@ -178,7 +189,7 @@ export default function Home() {
             icon={<Icon as={FaPlus} fontSize="16" />}
             title="Cadastrar Usuário"
           >
-            {isMdVerison && <Text>Cadastrar Usuário</Text>}
+            {isMdVerison && <Text>Novo Usuário</Text>}
           </Button>
 
           <FormModal
