@@ -1,4 +1,4 @@
-CRUD - Gerenciador de Usuários
+<h2 align="center">CRUD - Gerenciador de Usuários</h2>
 
 ## Tecnologias
 - [Next.js](https://nextjs.org/)
